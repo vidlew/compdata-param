@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell, TypeOperators, MultiParamTypeClasses,
+{-# LANGUAGE DeriveFunctor, TemplateHaskell, TypeOperators, MultiParamTypeClasses,
   FlexibleInstances, FlexibleContexts, UndecidableInstances,
   Rank2Types, GADTs #-}
 --------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ $(derive [smartConstructors, makeDifunctor, makeShowD, makeEqD, makeOrdD]
          [''Lam, ''App, ''Const, ''Plus, ''Let, ''Err])
 
 -- * Pretty printing
-data Stream a = Cons a (Stream a)
+data Stream a = Cons a (Stream a) deriving Functor
 
 class Pretty f where
   prettyAlg :: Alg f (Stream String -> String)

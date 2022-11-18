@@ -51,17 +51,17 @@ class EvalT f v where
 $(derive [liftSum] [''EvalT])
 
 -- Lift the evaluation algebra to a catamorphism
-evalT :: (Difunctor f, Ditraversable v, EvalT f v) => Term f -> Maybe (Term v)
+evalT :: (Difunctor f, Ditraversable v, EvalT f v, Thunk Maybe :<: (Thunk Maybe :+: v)) => Term f -> Maybe (Term v)
 evalT t = nfT $ Term (cata evalAlgT t)
 
 -- instance (Ditraversable f Maybe Any, f :<: v) => EvalT f v where
 --   evalAlgT  = strict'
 
-instance {-# OVERLAPPABLE #-} (Difunctor f, f :<: v) => EvalT f v where
+instance {-# OVERLAPPABLE #-} (Difunctor f, f :<: v, f :<: (Thunk Maybe :+: v)) => EvalT f v where
   evalAlgT  = inject'
 
 
-instance (Const :<: v) => EvalT Op v where
+instance (Const :<: v, Thunk Maybe :<: (Thunk Maybe :+: v), Const :<: (Thunk Maybe :+: v)) => EvalT Op v where
   evalAlgT (Add mx my)  = thunk $ do 
                             Const x <- whnfPr mx
                             Const y <- whnfPr my
@@ -71,7 +71,7 @@ instance (Const :<: v) => EvalT Op v where
                             Const y <- whnfPr my
                             return $ iConst $ x * y
 
-instance (Fun :<: v) => EvalT App v where
+instance (Fun :<: v, Thunk Maybe :<: (Thunk Maybe :+: v)) => EvalT App v where
   evalAlgT (App mx my) = thunk $ do 
                            Fun f <- whnfPr mx
                            -- lazy
@@ -79,7 +79,7 @@ instance (Fun :<: v) => EvalT App v where
                            -- strict
                            -- liftM f $ whnf' my
 
-instance (Fun :<: v) => EvalT Lam v where
+instance (Fun :<: v, Fun :<: (Thunk Maybe :+: v)) => EvalT Lam v where
   evalAlgT (Lam f) = inject $ Fun f
 
 -- |Evaluation of expressions to ground values.

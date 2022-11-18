@@ -86,8 +86,6 @@ library
                         Data.Comp.Param.Multi.Derive.Show
                         Data.Comp.Param.Multi.Derive.SmartConstructors
                         Data.Comp.Param.Multi.Derive.SmartAConstructors
-                        Data.Comp.Param.Multi.Derive.Injections
-                        Data.Comp.Param.Multi.Derive.Projections
 
   Build-Depends:	base >= 4.7, base < 5, template-haskell, mtl, transformers,
                         compdata >= 0.12 && < 0.13

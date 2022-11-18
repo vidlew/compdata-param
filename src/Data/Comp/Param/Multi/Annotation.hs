@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeOperators, MultiParamTypeClasses, FlexibleInstances,
+{-# LANGUAGE TypeOperators, MultiParamTypeClasses, FlexibleContexts, FlexibleInstances,
   UndecidableInstances, Rank2Types, GADTs, ScopedTypeVariables #-}
 --------------------------------------------------------------------------------
 -- |
