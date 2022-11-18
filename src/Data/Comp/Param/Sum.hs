@@ -61,7 +61,7 @@ project_ _ (Hole _) = Nothing
 project_ f (In t) = f t
 project_ _ (Var _) = Nothing
 
--- | Tries to coerce a term/context to a term/context over a sub-signature.
+-- | Tries to coerce a term\/context to a term\/context over a sub-signature.
 deepProject :: (Ditraversable g, g :<: f) => CxtFunM Maybe f g
 {-# INLINE deepProject #-}
 deepProject = appSigFunM' proj

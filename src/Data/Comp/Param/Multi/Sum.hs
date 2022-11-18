@@ -48,7 +48,7 @@ project (In t)   = proj t
 project (Hole _) = Nothing
 project (Var _)  = Nothing
 
--- | Tries to coerce a term/context to a term/context over a sub-signature.
+-- | Tries to coerce a term\/context to a term\/context over a sub-signature.
 deepProject :: (HDitraversable g, g :<: f) => Term f i -> Maybe (Term g i)
 {-# INLINE deepProject #-}
 deepProject = appTSigFunM' proj
