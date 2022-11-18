@@ -1,6 +1,13 @@
-{-# LANGUAGE TypeOperators, MultiParamTypeClasses, IncoherentInstances,
-  FlexibleInstances, FlexibleContexts, GADTs, TypeSynonymInstances,
-  ScopedTypeVariables, TemplateHaskell, Rank2Types #-}
+
+{-# LANGUAGE ConstraintKinds       #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE GADTs                 #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE Rank2Types            #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE TypeOperators         #-}
+{-# LANGUAGE TypeSynonymInstances  #-}
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Comp.Param.Sum
@@ -22,143 +29,63 @@ module Data.Comp.Param.Sum
 
      -- * Projections for Signatures and Terms
      proj,
-     proj2,
-     proj3,
-     proj4,
-     proj5,
-     proj6,
-     proj7,
-     proj8,
-     proj9,
-     proj10,
      project,
-     project2,
-     project3,
-     project4,
-     project5,
-     project6,
-     project7,
-     project8,
-     project9,
-     project10,
      deepProject,
-     deepProject2,
-     deepProject3,
-     deepProject4,
-     deepProject5,
-     deepProject6,
-     deepProject7,
-     deepProject8,
-     deepProject9,
-     deepProject10,
 
      -- * Injections for Signatures and Terms
      inj,
-     inj2,
-     inj3,
-     inj4,
-     inj5,
-     inj6,
-     inj7,
-     inj8,
-     inj9,
-     inj10,
      inject,
      inject',
-     inject2,
-     inject3,
-     inject4,
-     inject5,
-     inject6,
-     inject7,
-     inject8,
-     inject9,
-     inject10,
      deepInject,
-     deepInject2,
-     deepInject3,
-     deepInject4,
-     deepInject5,
-     deepInject6,
-     deepInject7,
-     deepInject8,
-     deepInject9,
-     deepInject10,
 
      injectCxt,
      liftCxt
     ) where
 
 import Prelude hiding (sequence)
-import Control.Monad hiding (sequence)
 import Data.Comp.Param.Term
 import Data.Comp.Param.Algebra
 import Data.Comp.Param.Ops
-import Data.Comp.Param.Derive.Projections
-import Data.Comp.Param.Derive.Injections
 import Data.Comp.Param.Difunctor
 import Data.Comp.Param.Ditraversable
 
-$(liftM concat $ mapM projn [2..10])
 
--- |Project the outermost layer of a term to a sub signature. If the signature
--- @g@ is compound of /n/ atomic signatures, use @project@/n/ instead.
+-- |Project a term to a sub signature.
 project :: (g :<: f) => Cxt h f a b -> Maybe (g a (Cxt h f a b))
-project (In t) = proj t
-project (Hole _) = Nothing
-project (Var _) = Nothing
+project = project_ proj
 
-$(liftM concat $ mapM projectn [2..10])
 
--- | Tries to coerce a term/context to a term/context over a sub-signature. If
--- the signature @g@ is compound of /n/ atomic signatures, use
--- @deepProject@/n/ instead.
-deepProject :: (Ditraversable g, g :<: f) => Term f -> Maybe (Term g)
+-- |Project a term to a sub signature.
+project_ :: SigFunM Maybe f g -> Cxt h f a b -> Maybe (g a (Cxt h f a b))
+project_ _ (Hole _) = Nothing
+project_ f (In t) = f t
+project_ _ (Var _) = Nothing
+
+-- | Tries to coerce a term/context to a term/context over a sub-signature.
+deepProject :: (Ditraversable g, g :<: f) => CxtFunM Maybe f g
 {-# INLINE deepProject #-}
-deepProject = appTSigFunM' proj
+deepProject = appSigFunM' proj
 
-$(liftM concat $ mapM deepProjectn [2..10])
-{-# INLINE deepProject2 #-}
-{-# INLINE deepProject3 #-}
-{-# INLINE deepProject4 #-}
-{-# INLINE deepProject5 #-}
-{-# INLINE deepProject6 #-}
-{-# INLINE deepProject7 #-}
-{-# INLINE deepProject8 #-}
-{-# INLINE deepProject9 #-}
-{-# INLINE deepProject10 #-}
-
-$(liftM concat $ mapM injn [2..10])
-
--- |Inject a term where the outermost layer is a sub signature. If the signature
--- @g@ is compound of /n/ atomic signatures, use @inject@/n/ instead.
+-- |Inject a term where the outermost layer is a sub signature.
 inject :: (g :<: f) => g a (Cxt h f a b) -> Cxt h f a b
 inject = In . inj
 
--- |Inject a term where the outermost layer is a sub signature. If the signature
--- @g@ is compound of /n/ atomic signatures, use @inject@/n/ instead.
+-- |Inject a term over a sub signature to a term over larger signature.
+deepInject :: (Difunctor g, g :<: f) => CxtFun g f
+{-# INLINE deepInject #-}
+deepInject = deepInject_ inj
+
+-- |Inject a term over a sub signature to a term over larger signature.
+deepInject_ :: (Difunctor g) => SigFun g f -> CxtFun g f
+{-# INLINE deepInject_ #-}
+deepInject_ = appSigFun
+
+-- |Inject a term where the outermost layer is a sub signature.
 inject' :: (Difunctor g, g :<: f) => g (Cxt h f a b) (Cxt h f a b) -> Cxt h f a b
 inject' = inject . dimap Var id
 
-$(liftM concat $ mapM injectn [2..10])
-
--- |Inject a term over a sub signature to a term over larger signature. If the
--- signature @g@ is compound of /n/ atomic signatures, use @deepInject@/n/
--- instead.
-deepInject :: (Difunctor g, g :<: f) => Term g -> Term f
-{-# INLINE deepInject #-}
-deepInject (Term t) = Term (appSigFun inj t)
-
-$(liftM concat $ mapM deepInjectn [2..10])
-{-# INLINE deepInject2 #-}
-{-# INLINE deepInject3 #-}
-{-# INLINE deepInject4 #-}
-{-# INLINE deepInject5 #-}
-{-# INLINE deepInject6 #-}
-{-# INLINE deepInject7 #-}
-{-# INLINE deepInject8 #-}
-{-# INLINE deepInject9 #-}
-{-# INLINE deepInject10 #-}
+--split :: (f :=: f1 :+: f2) => (f1 a (Term f) -> b) -> (f2 a (Term f) -> b) -> Term f -> b
+--split f1 f2 (In t) = spl f1 f2 t
 
 {-| This function injects a whole context into another context. -}
 injectCxt :: (Difunctor g, g :<: f) => Cxt h g a (Cxt h f a b) -> Cxt h f a b
