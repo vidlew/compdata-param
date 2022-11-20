@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP             #-}
 {-# LANGUAGE TemplateHaskell #-}
 --------------------------------------------------------------------------------
 -- |
@@ -57,6 +58,10 @@ smartConstructors fname = do
                     ftype = foldl appT (conT tname) (map varT targs')
                     constr = (conT ''(:<:) `appT` ftype) `appT` f
                     typ = foldl appT (conT ''Cxt) [h, f, a, b]
+#if __GLASGOW_HASKELL__ < 900
                     typeSig = forallT (map PlainTV vars) (sequence [constr]) typ
+#else
+                    typeSig = forallT (map (flip PlainTV InferredSpec) vars) (sequence [constr]) typ
+#endif
                 sigD sname typeSig
               genSig _ _ _ _ = []

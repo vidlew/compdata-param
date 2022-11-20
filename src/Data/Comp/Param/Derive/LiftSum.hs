@@ -28,10 +28,3 @@ import Data.Comp.Param.Ops ((:+:)(..))
   as @instance (ShowD f, ShowD g) => ShowD (f :+: g) where ... @. -}
 liftSum :: Name -> Q [Dec]
 liftSum = liftSumGen 'caseD ''(:+:)
-
-{-| Utility function to case on a difunctor sum, without exposing the internal
-  representation of sums. -}
-caseD :: (f a b -> c) -> (g a b -> c) -> (f :+: g) a b -> c
-caseD f g x = case x of
-                Inl x -> f x
-                Inr x -> g x
