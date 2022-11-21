@@ -84,8 +84,8 @@ deepInject_ = appSigFun
 inject' :: (Difunctor g, g :<: f) => g (Cxt h f a b) (Cxt h f a b) -> Cxt h f a b
 inject' = inject . dimap Var id
 
---split :: (f :=: f1 :+: f2) => (f1 a (Term f) -> b) -> (f2 a (Term f) -> b) -> Term f -> b
---split f1 f2 (In t) = spl f1 f2 t
+--split :: (Difunctor f, f :=: f1 :+: f2) => ((f1 a (Term f) -> b)) -> ((f2 a (Term f) -> b)) -> Term f -> b
+--split f1 f2 (Term t) = spl f1 f2 . difmap Term $ toTrm t
 
 {-| This function injects a whole context into another context. -}
 injectCxt :: (Difunctor g, g :<: f) => Cxt h g a (Cxt h f a b) -> Cxt h f a b

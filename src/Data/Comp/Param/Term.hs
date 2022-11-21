@@ -24,6 +24,7 @@ module Data.Comp.Param.Term
      Context,
      simpCxt,
      toCxt,
+     toTrm,
      cxtMap,
      ParamFunctor(..)
     ) where
@@ -69,6 +70,10 @@ simpCxt = In . difmap Hole
 toCxt :: Difunctor f => Trm f a -> Cxt h f a b
 {-# INLINE toCxt #-}
 toCxt = unsafeCoerce
+
+toTrm :: Difunctor f => Cxt NoHole f a b -> Cxt NoHole f a c
+toTrm (In x) = In $ difmap toTrm x
+toTrm (Var x) = Var x
 
 -- | This combinator maps a function over a context by applying the
 -- function to each hole.
