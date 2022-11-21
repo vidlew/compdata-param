@@ -34,7 +34,7 @@ instance (Difunctor f, ShowD f) => ShowD (Cxt h f) where
 
 {-| Printing of terms. -}
 instance (Difunctor f, ShowD f) => Show (Term f) where
-    show = evalFreshM . showD . toCxt . unTerm
+    show x = evalFreshM . showD . toCxt $ unTerm x
 
 instance (ShowD f, Show p) => ShowD (f :&: p) where
     showD (x :&: p) = do sx <- showD x

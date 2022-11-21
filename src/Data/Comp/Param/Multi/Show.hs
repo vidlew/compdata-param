@@ -35,7 +35,7 @@ instance (HDifunctor f, ShowHD f) => ShowHD (Cxt h f) where
 
 {-| Printing of terms. -}
 instance (HDifunctor f, ShowHD f) => Show (Term f i) where
-    show = evalFreshM . showHD . toCxt . unTerm
+    show x = evalFreshM . showHD . toCxt $ unTerm x
 
 instance (ShowHD f, Show p) => ShowHD (f :&: p) where
     showHD (x :&: p) = do sx <- showHD x
