@@ -1,8 +1,5 @@
-{-# LANGUAGE TemplateHaskell, TypeOperators, MultiParamTypeClasses,
-  FlexibleInstances, FlexibleContexts, UndecidableInstances,
-  Rank2Types, GADTs, KindSignatures,
-  ScopedTypeVariables, TypeFamilies #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TemplateHaskell, TypeOperators, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, UndecidableInstances, Rank2Types, GADTs, ScopedTypeVariables, TypeFamilies #-}
+
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Examples.MultiParam.Lambda
@@ -15,6 +12,9 @@
 -- Tagless (monadic) interpretation of extended lambda calculus
 --
 --------------------------------------------------------------------------------
+
+
+
 
 module Examples.Multi.Lambda where
 
