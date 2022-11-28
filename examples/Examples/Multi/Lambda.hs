@@ -2,6 +2,7 @@
   FlexibleInstances, FlexibleContexts, UndecidableInstances,
   Rank2Types, GADTs, KindSignatures,
   ScopedTypeVariables, TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts #-}
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Examples.MultiParam.Lambda
@@ -41,6 +42,36 @@ data Let :: (* -> *) -> (* -> *) -> * -> * where
 
 $(derive [smartConstructors, makeHDifunctor, makeEqHD]
          [''Lam, ''Let, ''App, ''Const, ''Plus, ''Err])
+
+-- * Pretty printing
+data Stream a = Cons a (Stream a)
+
+class Pretty f where
+  prettyAlg :: Alg f (K (Stream String -> String))
+
+$(derive [liftSum] [''Pretty])
+
+pretty :: (HDifunctor f, Pretty f) => Term f i -> String
+pretty t = (unK $ cata prettyAlg t) (nominals 1)
+    where nominals n = Cons ('x' : show n) (nominals (n + 1))
+
+instance Pretty Lam where
+  prettyAlg (Lam f) = K $ \(Cons x xs) -> "(\\" ++ x ++ ". " ++ unK (f (K $ const x)) xs ++ ")"
+
+instance Pretty App where
+  prettyAlg (App e1 e2) = K $ \xs -> "(" ++ unK e1 xs ++ " " ++ unK e2 xs ++ ")"
+
+instance Pretty Const where
+  prettyAlg (Const n) = K . const $ show n
+
+instance Pretty Plus where
+  prettyAlg (Plus e1 e2) = K $ \xs -> "(" ++ unK e1 xs ++ " + " ++ unK e2 xs ++ ")"
+
+instance Pretty Err where
+  prettyAlg Err = K $ const "error"
+
+instance Pretty Let where
+  prettyAlg (Let e1 e2) = K $ \(Cons x xs) -> "let " ++ x ++ " = " ++ unK e1 xs ++ " in " ++ unK (e2 (K $ const x)) xs
 
 -- * Tagless interpretation
 class Eval f where
@@ -89,7 +120,7 @@ instance Monad m => EvalM m Lam where
 
 instance Monad m => EvalM m App where
   evalMAlg (App (M mf) (M mx)) = do f <- mf; f =<< mx
-  
+
 instance Monad m => EvalM m Const where
   evalMAlg (Const n) = return n
 
@@ -103,7 +134,7 @@ e :: Term Sig Int
 e = Term ((iLam $ \x -> (iLam (\y -> y `iPlus` x) `iApp` iConst 3)) `iApp` iConst 2)
 
 ex :: Term (Sig :+: Let) Int
-ex = Term $ iLet (iLam (\x -> iLam $ \y -> iPlus x y)) (\x -> x `iApp` (iConst 5) `iApp` (iConst 7))
+ex = Term $ iLet (iLam (\x -> iLam $ \y -> iPlus x y)) (\x -> x `iApp` iConst 5 `iApp` (iConst 7))
 
 v :: Either String Int
 v = evalM e
