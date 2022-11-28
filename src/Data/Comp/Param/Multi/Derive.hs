@@ -28,6 +28,8 @@ module Data.Comp.Param.Multi.Derive
      module Data.Comp.Param.Multi.Derive.Show,
      -- ** HDifunctor
      module Data.Comp.Param.Multi.Derive.HDifunctor,
+     -- ** HDitraversable
+     module Data.Comp.Param.Multi.Derive.HDitraversable,
      -- ** Smart Constructors
      module Data.Comp.Param.Multi.Derive.SmartConstructors,
      -- ** Smart Constructors w/ Annotations
@@ -41,6 +43,7 @@ import Data.Comp.Param.Multi.Derive.Equality
 import Data.Comp.Param.Multi.Derive.Ordering
 import Data.Comp.Param.Multi.Derive.Show
 import Data.Comp.Param.Multi.Derive.HDifunctor
+import Data.Comp.Param.Multi.Derive.HDitraversable
 import Data.Comp.Param.Multi.Derive.SmartConstructors
 import Data.Comp.Param.Multi.Derive.SmartAConstructors
 import Data.Comp.Param.Multi.Ops ((:+:), caseHD)

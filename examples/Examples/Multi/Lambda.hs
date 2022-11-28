@@ -36,8 +36,11 @@ data Err :: (* -> *) -> (* -> *) -> * -> * where
   Err :: Err a b i
 type Sig = Lam :+: App :+: Const :+: Plus :+: Err
 
+data Let :: (* -> *) -> (* -> *) -> * -> * where
+  Let :: b i -> (a i -> b j) -> Let a b j
+
 $(derive [smartConstructors, makeHDifunctor, makeEqHD]
-         [''Lam, ''App, ''Const, ''Plus, ''Err])
+         [''Lam, ''Let, ''App, ''Const, ''Plus, ''Err])
 
 -- * Tagless interpretation
 class Eval f where
@@ -50,6 +53,9 @@ eval = unI . cata (I . evalAlg)
 
 instance Eval Lam where
   evalAlg (Lam f) = unI . f . I
+
+instance Eval Let where
+  evalAlg (Let x f) = unI $ f x
 
 instance Eval App where
   evalAlg (App (I f) (I x)) = f x
@@ -95,6 +101,9 @@ instance (MonadError String m, Monad m) => EvalM m Err where
 
 e :: Term Sig Int
 e = Term ((iLam $ \x -> (iLam (\y -> y `iPlus` x) `iApp` iConst 3)) `iApp` iConst 2)
+
+ex :: Term (Sig :+: Let) Int
+ex = Term $ iLet (iLam (\x -> iLam $ \y -> iPlus x y)) (\x -> x `iApp` (iConst 5) `iApp` (iConst 7))
 
 v :: Either String Int
 v = evalM e
