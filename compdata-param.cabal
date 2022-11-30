@@ -54,6 +54,7 @@ library
                         Data.Comp.Param.Derive,
                         Data.Comp.Param.Desugar
                         Data.Comp.Param.Thunk
+                        Data.Comp.Param.Mapping
 
                         Data.Comp.Param.Multi
                         Data.Comp.Param.Multi.Term
@@ -87,7 +88,7 @@ library
                         Data.Comp.Param.Multi.Derive.SmartConstructors
                         Data.Comp.Param.Multi.Derive.SmartAConstructors
 
-  Build-Depends:	base >= 4.7, base < 5, template-haskell, mtl, transformers,
+  Build-Depends:	base >= 4.7, base < 5, template-haskell, mtl, containers, transformers,
                         compdata >= 0.12 && < 0.13
   hs-source-dirs:	src
   ghc-options:          -W
