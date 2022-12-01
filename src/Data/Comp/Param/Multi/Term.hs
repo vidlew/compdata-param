@@ -24,6 +24,7 @@ module Data.Comp.Param.Multi.Term
      Context,
      simpCxt,
      toCxt,
+     toTrm,
      hfmapCxt,
      hdimapMCxt,
      ParamFunctor (..)
@@ -72,6 +73,10 @@ simpCxt = In . hfmap Hole
 toCxt :: HDifunctor f => Trm f a :-> Cxt h f a b
 {-# INLINE toCxt #-}
 toCxt = unsafeCoerce
+
+toTrm :: HDifunctor f => Cxt NoHole f a b :-> Cxt NoHole f a c
+toTrm (In x) = In $ hdimap id toTrm x
+toTrm (Var x) = Var x
 
 -- | This is an instance of 'hfmap' for 'Cxt'.
 hfmapCxt :: forall h f a b b'. HDifunctor f
