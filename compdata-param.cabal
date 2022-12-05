@@ -61,6 +61,7 @@ library
                         Data.Comp.Param.Multi.FreshM
                         Data.Comp.Param.Multi.Sum
                         Data.Comp.Param.Multi.HDifunctor
+                        Data.Comp.Param.Multi.HDifoldable
                         Data.Comp.Param.Multi.HDitraversable
                         Data.Comp.Param.Multi.Algebra
                         Data.Comp.Param.Multi.Annotation
