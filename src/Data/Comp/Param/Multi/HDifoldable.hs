@@ -24,19 +24,19 @@ import Data.Comp.Multi.HFunctor
 import Data.Comp.Multi.HFoldable
 import Data.Comp.Param.Multi.HDifunctor
 import Data.Comp.Param.Multi.Algebra
-import Data.Coerce
+--import Data.Coerce
 import Data.Monoid
 
-instance Semigroup m => Semigroup (K m i) where
-    (K a) <> (K b) = K $ a<>b
+--instance Semigroup m => Semigroup (K m i) where
+--    (K a) <> (K b) = K $ a<>b
 
-instance Monoid m => Monoid (K m i) where
-    mempty = K mempty
+--instance Monoid m => Monoid (K m i) where
+--    mempty = K mempty
 
 {-| HDifunctors representing data structures that can be folded. -}
 class HDifunctor f => HDifoldable f where
     hdifold :: Monoid m => Alg f (K m)
-    hdifold = hdifoldMap coerce
+    hdifold = K . hdifoldMap unK
 
     hdifoldMap :: Monoid m => (a :=> m) -> f a a :=> m
     hdifoldMap f = hdifoldr (mappend . f) mempty
