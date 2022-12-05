@@ -22,6 +22,7 @@ module Data.Comp.Param.Multi.HDifoldable
 import Prelude hiding (mapM, sequence, foldr)
 import Data.Comp.Multi.HFunctor
 import Data.Comp.Multi.HFoldable
+import Data.Comp.Param.Multi.Ops
 import Data.Comp.Param.Multi.HDifunctor
 import Data.Comp.Param.Multi.Algebra
 --import Data.Coerce
@@ -46,3 +47,6 @@ class HDifunctor f => HDifoldable f where
 
     hdifoldl :: (b -> (a :=> b)) -> b -> f a a :=> b
     hdifoldl f z t = appEndo (getDual (hdifoldMap (Dual . Endo . flip f) t)) z
+
+instance (HDifoldable f, HDifoldable g) => HDifoldable (f :+: g) where
+    hdifold = caseHD hdifold hdifold
