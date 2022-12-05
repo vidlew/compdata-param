@@ -70,6 +70,7 @@ library
                         Data.Comp.Param.Multi.Show
                         Data.Comp.Param.Multi.Derive,
                         Data.Comp.Param.Multi.Desugar
+                        Data.Comp.Param.Multi.Mapping
 
   Other-Modules:        Data.Comp.SubsumeCommon
                         Data.Comp.Param.Derive.Difunctor
